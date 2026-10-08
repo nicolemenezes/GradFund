@@ -26,3 +26,5 @@ GradFund: Education Loan Assessment & Matching Engine
 3. **Indian Tax & Net Worth Document Health Checker**
    - *Problem:* Loan applications face severe delays due to minor documentation mismatches (e.g., ITR gross income not matching bank statement credits, or CA certificates missing mandatory UDIN numbers).
    - *Solution:* An automated pre-underwriting audit checklist that cross-checks files, validates UDIN numbers, and generates a real-time "Document Readiness Score".
+     
+Demo video - https://github.com/user-attachments/assets/1a65c0fc-0a98-4f85-8199-85ed0fa9344d
