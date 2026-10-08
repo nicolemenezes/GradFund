@@ -3,7 +3,7 @@ GradFund: Education Loan Assessment & Matching Engine
 **GradFund** is a specialized MERN-stack financial assessment and matching engine built for Indian students and families planning higher education abroad. While standard international education tools focus solely on tuition and living expenses, GradFund accounts for the systemic, regulatory, and financial hurdles unique to Indian education financing.
 
 ## 🚀 Live Links
-- **Frontend App (Vercel): https://vercel.com/nicole-menezes-projects/grad-fund
+- **Frontend App (Vercel): https://grad-fund-kappa.vercel.app/
 - **Backend API (Render): https://gradfund-backend.onrender.com/
 
 ---
