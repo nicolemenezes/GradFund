@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { FileCheck, UploadCloud, CheckCircle2, Trash2, FileText, ArrowLeft, AlertCircle, Loader2, Lock } from 'lucide-react';
 import DocumentHealthChecker from './DocumentHealthChecker';
+import { useToast } from '../context/ToastContext';
 
 const MANDATORY_DOCS = [
   { id: 'itr', title: 'Income Tax Returns (ITR)', subtitle: 'Last 3 Years for Co-applicant (Form 16)' },
@@ -15,6 +16,7 @@ export default function Step4DocumentsUpload({ formData, updateFormData, onSubmi
   const [dragActive, setDragActive] = useState(false);
   const [targetDocTitle, setTargetDocTitle] = useState('');
   const fileInputRef = useRef(null);
+  const toast = useToast();
 
   const uploadedFiles = formData.uploadedDocuments || [];
   const requiredDocsList = MANDATORY_DOCS.filter(d => !d.conditional || formData.hasCollateral);
@@ -60,14 +62,25 @@ export default function Step4DocumentsUpload({ formData, updateFormData, onSubmi
         uploadedDocuments: [...uploadedFiles, ...newDocs]
       });
 
+      if (newDocs.length === 1) {
+        toast.success(`Attached document: ${newDocs[0].name}`);
+      } else {
+        toast.success(`Attached ${newDocs.length} documents successfully`);
+      }
+
       // Reset file input value so re-selecting same file triggers onChange
       e.target.value = '';
     }
   };
 
   const handleRemoveFile = (fileId) => {
+    const fileToRemove = uploadedFiles.find((f) => f.id === fileId);
     const updated = uploadedFiles.filter((f) => f.id !== fileId);
     updateFormData({ uploadedDocuments: updated });
+
+    if (fileToRemove) {
+      toast.info(`Removed document: ${fileToRemove.name}`);
+    }
   };
 
   const handleDrop = (e) => {
@@ -93,7 +106,17 @@ export default function Step4DocumentsUpload({ formData, updateFormData, onSubmi
       updateFormData({
         uploadedDocuments: [...uploadedFiles, ...newDocs]
       });
+
+      toast.success(`Dropped and attached ${newDocs.length} document(s)`);
     }
+  };
+
+  const handleSubmitClick = () => {
+    if (!isRequirementMet) {
+      toast.warning(`Please attach at least ${minRequiredCount} mandatory documents (${uploadedFiles.length}/${minRequiredCount} attached)`);
+      return;
+    }
+    onSubmitAssessment();
   };
 
   return (
@@ -241,12 +264,12 @@ export default function Step4DocumentsUpload({ formData, updateFormData, onSubmi
 
           <button
             type="button"
-            onClick={onSubmitAssessment}
-            disabled={isLoading || !isRequirementMet}
+            onClick={handleSubmitClick}
+            disabled={isLoading}
             className={`w-full sm:w-auto px-9 py-3.5 rounded-lg font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-sm ${
               isRequirementMet && !isLoading
                 ? 'bg-[#1A1A1A] hover:bg-black text-white cursor-pointer'
-                : 'bg-gray-200 text-gray-500 border border-gray-300 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-500 border border-gray-300 cursor-pointer'
             }`}
           >
             {isLoading ? (

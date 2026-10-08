@@ -15,11 +15,13 @@ import { formatINR, formatShortINR } from '../utils/formatters';
 import LrsTaxCalculator from './LrsTaxCalculator';
 import DebtStressAnalyzer from './DebtStressAnalyzer';
 import DocumentHealthChecker from './DocumentHealthChecker';
+import { useToast } from '../context/ToastContext';
 
 export default function ResultsView({ resultData, formData, onStartOver }) {
   const [activeTab, setActiveTab] = useState('lenders'); // 'lenders', 'lrs', 'foir', 'doc-health'
   const [lenderFilter, setLenderFilter] = useState('all');
   const [expandedLenderId, setExpandedLenderId] = useState(null);
+  const toast = useToast();
 
   if (!resultData) return null;
 
@@ -51,6 +53,15 @@ export default function ResultsView({ resultData, formData, onStartOver }) {
     foirBadgeClass = 'bg-rose-950 text-rose-300 border-rose-800';
   }
 
+  const handleExportPdf = () => {
+    toast.info('Opening print window to export PDF report...');
+    window.print();
+  };
+
+  const handleApplyNow = (lender) => {
+    toast.success(`Application initiated for ${lender.lenderName} (${lender.loanType})`);
+  };
+
   return (
     <div className="space-y-8">
       {/* Signature GradGuide Solid Dark Banner */}
@@ -75,7 +86,7 @@ export default function ResultsView({ resultData, formData, onStartOver }) {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.print()}
+              onClick={handleExportPdf}
               className="px-4 py-2.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" /> Export PDF
@@ -337,7 +348,7 @@ export default function ResultsView({ resultData, formData, onStartOver }) {
                         </button>
 
                         <button
-                          onClick={() => alert(`Simulated application start for ${lender.lenderName} (${lender.loanType})`)}
+                          onClick={() => handleApplyNow(lender)}
                           className={`py-2 px-4 text-xs font-bold rounded-lg transition cursor-pointer ${
                             lender.isEligible
                               ? 'bg-[#1A1A1A] hover:bg-black text-white'

@@ -5,6 +5,7 @@ import Step2FinancialProfile from './Step2FinancialProfile';
 import Step3Collateral from './Step3Collateral';
 import Step4DocumentsUpload from './Step4DocumentsUpload';
 import ResultsView from './ResultsView';
+import { useToast } from '../context/ToastContext';
 
 const INITIAL_FORM_DATA = {
   // Step 1: Study Details
@@ -39,6 +40,7 @@ export default function FormWizard({ onStepChange }) {
   const [isLoading, setIsLoading] = useState(false);
   const [assessmentResult, setAssessmentResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const toast = useToast();
 
   const updateFormData = (patch) => {
     setFormData((prev) => ({ ...prev, ...patch }));
@@ -65,6 +67,7 @@ export default function FormWizard({ onStepChange }) {
     setAssessmentResult(null);
     setCurrentStep(1);
     setErrorMsg(null);
+    toast.info('Assessment form reset.');
     if (onStepChange) onStepChange(1);
   };
 
@@ -72,6 +75,7 @@ export default function FormWizard({ onStepChange }) {
   const handleSubmitAssessment = async () => {
     setIsLoading(true);
     setErrorMsg(null);
+    toast.info('Calculating loan assessment & matching bank schemes...');
 
     try {
       const response = await fetch('http://localhost:5000/api/assessments', {
@@ -89,6 +93,8 @@ export default function FormWizard({ onStepChange }) {
       }
 
       setAssessmentResult(json.data);
+      const eligibleCount = (json.data.matchedLenders || []).filter(l => l.isEligible).length;
+      toast.success(`Assessment completed! Found ${eligibleCount} eligible bank scheme(s).`);
     } catch (err) {
       console.warn('Backend API connection error. Generating live offline fallback assessment.', err);
 
@@ -160,6 +166,9 @@ export default function FormWizard({ onStepChange }) {
         matchedLendersCount: fallbackLenders.filter(l => l.isEligible).length,
         matchedLenders: fallbackLenders
       });
+
+      const eligibleCount = fallbackLenders.filter(l => l.isEligible).length;
+      toast.success(`Assessment completed! Found ${eligibleCount} eligible bank scheme(s).`);
     } finally {
       setIsLoading(false);
     }
