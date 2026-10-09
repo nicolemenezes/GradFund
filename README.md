@@ -8,7 +8,7 @@ GradFund: Education Loan Assessment & Matching Engine
 
 ---
 🛠️ Tech Stack
-- **Frontend:** React, Vite, Tailwind CSS (styled using GradGuide’s editorial brand design system).
+- **Frontend:** React, Vite, Tailwind CSS.
 - **Backend:** Node.js, Express.js.
 - **Database & Seeding:** MongoDB, Mongoose. Features an automated startup seed script that populates official lender criteria (public banks like SBI, BOB, BOI, and NBFCs like Credila, Auxilo) directly into the database so eligibility rules are queried dynamically rather than hardcoded.
 
